@@ -1,6 +1,6 @@
 const express = require('express');
 const routes = express.Router();
-const { getClassById, updateClass, deleteClass } = require("../services/class-management-service");
+const { getAllClasses, getClassById, updateClass, deleteClass } = require("../services/class-management-service");
 
 
 routes.get("/getAllClass", async (req, res) => {
