@@ -20,7 +20,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.use("/docs", express.static(path.join(__dirname, "docs")));
+//app.use("/docs", express.static(path.join(__dirname, "docs")));
 
 connectDB().then(() => {
   setupSequelize.sync({ alter: true })
