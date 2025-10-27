@@ -110,12 +110,6 @@
       "Answer": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "questionId": {
-            "type": "integer"
-          },
           "label": {
             "type": "string"
           },
@@ -371,7 +365,7 @@
         }
       }
     },
-    "/api/exam/getExamByClass/{classId}": {
+    "/api/exam/getExamsByClass/{classId}": {
       "get": {
         "tags": [
           "Exam"
