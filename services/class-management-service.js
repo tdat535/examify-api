@@ -1,28 +1,6 @@
 const Class = require("../model/Class");
 const User = require("../model/User");
 
-const createClass = async (name, teacherId) => {
-  try {
-    const teacher = await User.findByPk(teacherId);
-    if (!teacher || teacher.role !== "teacher") {
-      throw new Error("Giáo viên không hợp lệ");
-    }
-
-    const newClass = await Class.create({ 
-      className: name, 
-      teacherId: teacherId 
-    });
-
-    return { 
-      className: newClass.className,
-      teacherId: newClass.teacherId
-    };
-    
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
-
 const getAllClasses = async () => {
   try {
     const classes = await Class.findAll({
@@ -31,15 +9,14 @@ const getAllClasses = async () => {
         as: "teacher",
         attributes: ["id", "username", "email"],
       },
+      order: [["id", "ASC"]],
     });
-    return { 
-      className: classes.className,
-      teacherId: classes.teacherId,
-    };
+
+    return { data: classes };
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const getClassById = async (classId) => {
   try {
@@ -57,7 +34,7 @@ const getClassById = async (classId) => {
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const updateClass = async (classId, name, teacherId) => {
   try {
@@ -71,25 +48,21 @@ const updateClass = async (classId, name, teacherId) => {
       }
     }
 
-    await classData.update({ name, teacherId });
-    return { 
-      message: "Cập nhật lớp học thành công" 
-    };
+    await classData.update({ className: name, teacherId });
+    return { message: "Cập nhật lớp học thành công" };
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const deleteClass = async (classId) => {
   try {
     const deleted = await Class.destroy({ where: { id: classId } });
     if (!deleted) throw new Error("Không tìm thấy lớp học để xóa");
-    return { 
-      message: "Xóa lớp học thành công" 
-    };
+    return { message: "Xóa lớp học thành công" };
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
-module.exports = { createClass, getAllClasses, getClassById, updateClass, deleteClass };
+module.exports={ getAllClasses, getClassById, updateClass, deleteClass};

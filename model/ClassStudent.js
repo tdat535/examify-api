@@ -16,7 +16,7 @@ const ClassStudent = setupSequelize.define('classStudent', {
     timestamps: true
 });
 
-User.belongsToMany(Class, { through: ClassStudent, foreignKey: 'studentId', as: 'JoinedClass' });
-Class.belongsToMany(User, { through: ClassStudent, foreignKey: 'classId', as: 'Students' });
+User.belongsToMany(Class, { through: ClassStudent, foreignKey: 'studentId', as: 'joinedClasses' });
+Class.belongsToMany(User, { through: ClassStudent, foreignKey: 'classId', as: 'students' });
 
 module.exports = ClassStudent;

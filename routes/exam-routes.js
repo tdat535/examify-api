@@ -1,6 +1,6 @@
 const express = require('express');
 const routes = express.Router();;
-const { createExam, addQuestionAndAnswersToExam, getExamById, getExamResultsByUser, submitExam } = require("../services/exam-services");
+const { createExam, addQuestionAndAnswersToExam,getExamsByClassId, getExamById, getExamResultsByUser, submitExam } = require("../services/exam-services");
 
 routes.post("/create-exam", async (req, res) => {
     try {
@@ -47,7 +47,25 @@ routes.post("/add-question/:examId", async (req, res) => {
     }
 })
 
-routes.get("/getExam/:id", async (req, res) => {
+// ✅ NEW: Lấy danh sách bài thi theo mã lớp
+routes.get("/getExamsByClass/:classId", async (req, res) => {
+  try {
+    const classId = req.params.classId;
+    const exams = await getExamsByClassId(classId);
+    res.status(200).send({
+      status: true,
+      message: "Lấy danh sách bài thi thành công",
+      data: exams,
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error.message,
+    });
+  }
+});
+
+routes.get("/getExamDetail/:id", async (req, res) => {
     try {
         const examId = req.params.id;
 

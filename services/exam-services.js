@@ -32,7 +32,7 @@ const addQuestionAndAnswersToExam = async (examId, questionList) => {
     const transactionQA = await Question.sequelize.transaction();
 
     try {
-        for ( const questionData of questionList ) {
+        for (const questionData of questionList) {
             const questionCreated = await Question.create(
                 {
                     content: questionData.content,
@@ -43,7 +43,7 @@ const addQuestionAndAnswersToExam = async (examId, questionList) => {
             );
 
             const answersCreated = [];
-            for ( const answerData of questionData.answers) {
+            for (const answerData of questionData.answers) {
                 const created = await Answer.create(
                     {
                         questionId: questionCreated.id,
@@ -76,23 +76,41 @@ const addQuestionAndAnswersToExam = async (examId, questionList) => {
     }
 }
 
+const getExamsByClassId = async (classId) => {
+    try {
+        const exams = await ExamTest.findAll({
+            where: { classId },
+            attributes: ["id", "title", "duration", "quantityQuestion", "createdAt"],
+            order: [["createdAt", "DESC"]],
+        });
+
+        if (!exams || exams.length === 0) {
+            throw new Error("Không có bài thi nào trong lớp này");
+        }
+
+        return exams;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 const getExamById = async (examId) => {
     try {
         const exam = await ExamTest.findByPk(examId, {
             include: [
                 {
                     model: Question,
-                    attributes: { exclude: ['createdAt', 'updatedAt']},
+                    attributes: { exclude: ['createdAt', 'updatedAt'] },
                     include: [
                         {
                             model: Answer,
-                            attributes: { exclude: ['createdAt', 'updatedAt']},
+                            attributes: { exclude: ['createdAt', 'updatedAt'] },
                         }
                     ]
                 }
             ]
         })
-        
+
         if (!exam) {
             throw new Error("Không tìm thấy đề thi");
         }
@@ -115,7 +133,7 @@ const submitExam = async (examId, studentId, answers) => {
             throw new Error("Không tìm thấy đề thi");
         }
         let totalScore = 0;
-        for ( const question of exam.Questions ) {
+        for (const question of exam.Questions) {
             const studentAnswer = answers.find(ans => ans.questionId === question.id);
             if (studentAnswer && studentAnswer.answerId === question.correctAnswerIndex) {
                 totalScore += question.score;
@@ -155,6 +173,6 @@ const getExamResultsByUser = async (userId) => {
     }
 }
 
-module.exports = { createExam, addQuestionAndAnswersToExam, getExamById, submitExam, getExamResultsByUser };
+module.exports = { createExam, addQuestionAndAnswersToExam, getExamById, submitExam, getExamResultsByUser, getExamsByClassId };
 
 
