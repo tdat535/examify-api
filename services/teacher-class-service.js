@@ -2,27 +2,29 @@ const Class = require("../model/Class");
 const User = require("../model/User");
 const Role = require("../model/Role");
 const ClassStudent = require("../model/ClassStudent");
-const { nanoid } = require("nanoid");
 
 const createClass = async (name, teacherId) => {
   try {
+    const { nanoid } = await import('nanoid');
+
     const teacher = await User.findByPk(teacherId, {
       include: [{ model: Role, as: "role" }],
     });
-    console.log(teacher);
-    if (!teacher || teacher.role.name !== "teacher") throw new Error("Giáo viên không hợp lệ");
+
+    if (!teacher || teacher.role.name !== "teacher")
+      throw new Error("Giáo viên không hợp lệ");
 
     const newClass = await Class.create({
       className: name,
       teacherId,
-      classCode: nanoid(6).toUpperCase()
+      classCode: nanoid(6).toUpperCase(),
     });
 
     return {
       id: newClass.id,
       className: newClass.className,
       classCode: newClass.classCode,
-      teacherId: newClass.teacherId
+      teacherId: newClass.teacherId,
     };
   } catch (error) {
     throw new Error(error.message);
