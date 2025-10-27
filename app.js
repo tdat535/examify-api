@@ -22,9 +22,10 @@ app.get("/", async (req, res) => {
 
 app.use("/docs", express.static(path.join(__dirname, "docs")));
 
-connectDB()
-  .then(() => console.log("Database connected"))
-  .catch((err) => console.error("Database connection error:", err));
+connectDB().then(() => {
+  setupSequelize.sync({ alter: true })
+    .then(() => console.log("Database đã được đồng bộ"))
+    .catch((err) => console.error("Lỗi đồng bộ database:", err));
+});
 
-// ✅ Export app cho Vercel
 module.exports = app;
