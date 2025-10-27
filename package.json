@@ -18,6 +18,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.15.2",
     "nanoid": "^5.1.6",
+    "redoc": "^3.0.0-rc.0",
     "redoc-express": "^2.1.0",
     "sequelize": "^6.37.7"
   },
