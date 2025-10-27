@@ -35,12 +35,14 @@ const getClassesByStudent = async (studentId) => {
     }
 
     const classes = await student.getJoinedClasses({
-      attributes: { exclude: ["teacherId"] }, // 👈 bỏ teacherId
-      include: {
-        model: User,
-        as: "teacher",
-        attributes: ["id", "username", "email"],
-      },
+      attributes: { exclude: ["teacherId"] },
+      include: [
+        {
+          model: User,
+          as: "teacher",
+          attributes: ["id", "username", "email"],
+        },
+      ],
     });
 
     return classes;
@@ -48,5 +50,6 @@ const getClassesByStudent = async (studentId) => {
     throw new Error(error.message);
   }
 };
+
 
 module.exports = { joinClassByCode, getClassesByStudent };
