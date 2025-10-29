@@ -76,7 +76,7 @@ const removeStudentFromClass = async (classId, studentId) => {
 const profile = async (userId) => {
   try {
     const user = await User.findByPk(userId, {
-      attributes: ['id', 'username', 'email', 'realName'],
+      attributes: ['id', 'username', 'email', 'realName', 'phone'],
       include: {
         model: Role,
         as: 'role',
