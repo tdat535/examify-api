@@ -110,9 +110,6 @@
       "Answer": {
         "type": "object",
         "properties": {
-          "label": {
-            "type": "string"
-          },
           "content": {
             "type": "string"
           }
@@ -448,9 +445,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "userId": {
-                    "type": "integer"
-                  },
                   "answers": {
                     "type": "array",
                     "items": {
@@ -484,22 +478,12 @@
         }
       }
     },
-    "/api/exam/exam-results/{userId}": {
+    "/api/exam/exam-results": {
       "get": {
         "tags": [
           "Exam"
         ],
         "summary": "Lấy kết quả thi của học sinh",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Danh sách kết quả thi",
@@ -517,22 +501,12 @@
         }
       }
     },
-    "/api/teacher/getClasses/{teacherId}": {
+    "/api/teacher/getClasses": {
       "get": {
         "tags": [
           "Teacher"
         ],
         "summary": "Lấy tất cả lớp của giáo viên",
-        "parameters": [
-          {
-            "name": "teacherId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Danh sách lớp của giáo viên",
@@ -565,9 +539,6 @@
                 "properties": {
                   "name": {
                     "type": "string"
-                  },
-                  "teacherId": {
-                    "type": "integer"
                   }
                 }
               }
@@ -669,9 +640,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "studentId": {
-                    "type": "integer"
-                  },
                   "classCode": {
                     "type": "string"
                   }
@@ -694,22 +662,12 @@
         }
       }
     },
-    "/api/student/getClasses/{studentId}": {
+    "/api/student/getClasses": {
       "get": {
         "tags": [
           "Student"
         ],
         "summary": "Lấy danh sách lớp học sinh tham gia",
-        "parameters": [
-          {
-            "name": "studentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "List of classes student joined",

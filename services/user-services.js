@@ -63,6 +63,29 @@ const login = async (userData) => {
     }
 }
 
+const refreshToken = async (token) => {
+    try {
+        if (!token) {
+            throw new Error("Vui lòng đăng nhập");
+        }
+        const decoded = jwt.verify(token, process.env.REFRESH_KEY);
+        const user = await User.findByPk(decoded.id);
+        if (!user) {
+            throw new Error("Người dùng không tồn tại");
+        }
+
+        const accessToken = GenerateAccessToken(user);
+        const refToken = GenerateRefreshToken(user);
+        return {
+            accessToken: accessToken,
+            refreshToken: refToken
+        }
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 const GenerateAccessToken = (user) => {
     return jwt.sign(
         { id: user.id, role: user.role, username: user.username },
@@ -79,4 +102,4 @@ const GenerateRefreshToken = (user) => {
     )
 }
 
-module.exports = { register, login };
+module.exports = { register, login, refreshToken };

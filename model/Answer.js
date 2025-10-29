@@ -7,10 +7,6 @@ const Answer = setupSequelize.define('Answer', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    label: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     content: {
         type: DataTypes.TEXT,
         allowNull: false,

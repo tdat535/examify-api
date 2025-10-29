@@ -1,9 +1,10 @@
 const express = require('express');
 const routes = express.Router();
 const { joinClassByCode, getClassesByStudent } = require("../services/student-class-service");
+const authenticateToken = require("../middleware/authenticate");
 
 // 🧑‍🎓 Học sinh tham gia lớp bằng mã
-routes.post("/join", async (req, res) => {
+routes.post("/join", authenticateToken,  async (req, res) => {
     try {
         const { studentId, classCode } = req.body;
         const result = await joinClassByCode(studentId, classCode);
@@ -21,9 +22,9 @@ routes.post("/join", async (req, res) => {
 });
 
 // 📚 Lấy danh sách lớp học sinh tham gia
-routes.get("/getClasses/:studentId", async (req, res) => {
+routes.get("/getClasses", authenticateToken, async (req, res) => {
     try {
-        const { studentId } = req.params;
+        const studentId = req.user.id;
         const result = await getClassesByStudent(studentId);
         res.status(200).send({
             status: true,

@@ -50,4 +50,6 @@ routes.post("/login", async (req, res) => {
     }
 })
 
+routes.post
+
 module.exports = routes;

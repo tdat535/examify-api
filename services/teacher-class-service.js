@@ -33,6 +33,13 @@ const createClass = async (name, teacherId) => {
 
 const getClassesByTeacher = async (teacherId) => {
   try {
+    const teacher = await User.findByPk(teacherId, {
+      include: [{ model: Role, as: "role" }],
+    });
+
+    if (!teacher || teacher.role.name !== "teacher")
+      throw new Error("Giáo viên không hợp lệ");
+
     const classes = await Class.findAll({ where: { teacherId } });
     return classes;
   } catch (error) {
@@ -84,7 +91,7 @@ const profile = async (userId) => {
       }
     });
 
-    if (!user) throw new Error("Người dùng không tồn tại"); 
+    if (!user) throw new Error("Người dùng không tồn tại");
     return user;
   } catch (error) {
     throw new Error(error.message);

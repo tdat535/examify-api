@@ -1,9 +1,9 @@
 const express = require('express');
 const routes = express.Router();
 const { getAllClasses, getClassById, updateClass, deleteClass } = require("../services/class-management-service");
+const authenticateToken = require("../middleware/authenticate");
 
-
-routes.get("/getAllClass", async (req, res) => {
+routes.get("/getAllClass", authenticateToken, async (req, res) => {
   try {
     const result = await getAllClasses();
     res.status(200).send({
@@ -20,7 +20,7 @@ routes.get("/getAllClass", async (req, res) => {
 });
 
 // 🔍 Lấy chi tiết lớp
-routes.get("/detail/:classId", async (req, res) => {
+routes.get("/detail/:classId", authenticateToken, async (req, res) => {
     try {
         const { classId } = req.params;
         const result = await getClassById(classId);
@@ -39,7 +39,7 @@ routes.get("/detail/:classId", async (req, res) => {
 });
 
 // ✏️ Cập nhật lớp học
-routes.put("/update/:classId", async (req, res) => {
+routes.put("/update/:classId", authenticateToken, async (req, res) => {
     try {
         const { classId } = req.params;
         const { className, teacherId } = req.body;
@@ -58,7 +58,7 @@ routes.put("/update/:classId", async (req, res) => {
 });
 
 // ❌ Xóa lớp học
-routes.delete("/delete/:classId", async (req, res) => {
+routes.delete("/delete/:classId", authenticateToken, async (req, res) => {
     try {
         const { classId } = req.params;
         const result = await deleteClass(classId);

@@ -1,8 +1,9 @@
 const express = require('express');
 const routes = express.Router();;
 const { createExam, addQuestionAndAnswersToExam,getExamsByClassId, getExamById, getExamResultsByUser, submitExam } = require("../services/exam-services");
+const authenticateToken = require("../middleware/authenticate");
 
-routes.post("/create-exam", async (req, res) => {
+routes.post("/create-exam", authenticateToken, async (req, res) => {
     try {
         const examData = {
             title: req.body.title,
@@ -27,7 +28,7 @@ routes.post("/create-exam", async (req, res) => {
     }
 })
 
-routes.post("/add-question/:examId", async (req, res) => {
+routes.post("/add-question/:examId", authenticateToken, async (req, res) => {
     try {
         const examId = req.params.examId;
         const questionData = req.body.questionList;
@@ -48,7 +49,7 @@ routes.post("/add-question/:examId", async (req, res) => {
 })
 
 // ✅ NEW: Lấy danh sách bài thi theo mã lớp
-routes.get("/getExamsByClass/:classId", async (req, res) => {
+routes.get("/getExamsByClass/:classId", authenticateToken, async (req, res) => {
   try {
     const classId = req.params.classId;
     const exams = await getExamsByClassId(classId);
@@ -65,7 +66,7 @@ routes.get("/getExamsByClass/:classId", async (req, res) => {
   }
 });
 
-routes.get("/getExamDetail/:id", async (req, res) => {
+routes.get("/getExamDetail/:id", authenticateToken, async (req, res) => {
     try {
         const examId = req.params.id;
 
@@ -85,11 +86,11 @@ routes.get("/getExamDetail/:id", async (req, res) => {
     }
 })
 
-routes.post("/submit-exam/:examId", async (req, res) => {
+routes.post("/submit-exam/:examId", authenticateToken, async (req, res) => {
     try {
         const examId = req.params.examId;
         const answers = req.body.answers;
-        const userId = req.body.userId;
+        const userId = req.user.id;
         
         const result = await submitExam(examId, userId, answers);
 
@@ -107,9 +108,9 @@ routes.post("/submit-exam/:examId", async (req, res) => {
     }
 })
 
-routes.get("/exam-results/:userId", async (req, res) => {
+routes.get("/exam-results", authenticateToken, async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const userId = req.user.id;
         const result = await getExamResultsByUser(userId);
         res.status(200).send({
             status: true,
