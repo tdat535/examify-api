@@ -53,4 +53,9 @@ connectDB().then(() => {
     .catch((err) => console.error("Lỗi đồng bộ database:", err));
 });
 
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+});
+
 module.exports = app;

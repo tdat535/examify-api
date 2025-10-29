@@ -73,5 +73,23 @@ const removeStudentFromClass = async (classId, studentId) => {
   }
 }
 
+const profile = async (userId) => {
+  try {
+    const user = await User.findByPk(userId, {
+      attributes: ['id', 'username', 'email', 'realName'],
+      include: {
+        model: Role,
+        as: 'role',
+        attributes: ['id', 'name']
+      }
+    });
 
-module.exports = { createClass, getClassesByTeacher, getStudentsByClass, removeStudentFromClass };
+    if (!user) throw new Error("Người dùng không tồn tại"); 
+    return user;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
+module.exports = { createClass, getClassesByTeacher, getStudentsByClass, removeStudentFromClass, profile };

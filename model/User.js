@@ -15,6 +15,10 @@ const User = setupSequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    realName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    }
 }, {
     timestamps: true
 });

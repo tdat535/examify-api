@@ -36,14 +36,14 @@ routes.post("/login", async (req, res) => {
 
         const result = await login(userData);
         
-        res.status(200).send({
+        res.status(200).json({
             status:true,
             message: "Đăng nhập thành công",
             data: result
         })
     }
     catch (error) {
-        res.status(500).send({
+        res.status(500).json({
             status: false,
             message: error.message
         })

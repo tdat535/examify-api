@@ -1,6 +1,6 @@
 const express = require('express');
 const routes = express.Router();
-const { createClass, getClassesByTeacher, getStudentsByClass, removeStudentFromClass } = require("../services/teacher-class-service")
+const { createClass, getClassesByTeacher, getStudentsByClass, removeStudentFromClass, profile } = require("../services/teacher-class-service")
 // ➕ Tạo lớp mới
 routes.post("/createClass", async (req, res) => {
     try {
@@ -70,9 +70,27 @@ routes.delete("/deleteStudent", async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).send({ 
-            status: false, 
-            message: error.message 
+        res.status(500).send({
+            status: false,
+            message: error.message
+        });
+    }
+});
+
+routes.get("/profile/:teacherId", async (req, res) => {
+    try {
+        const { teacherId } = req.params;
+        const result = await profile(teacherId);
+        res.status(200).send({
+            status: true,
+            message: "Lấy thông tin giáo viên thành công",
+            data: result
+        });
+    }
+    catch (error) {
+        res.status(500).send({
+            status: false,
+            message: error.message
         });
     }
 });
