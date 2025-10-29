@@ -18,6 +18,10 @@ const User = setupSequelize.define('User', {
     realName: {
         type: DataTypes.STRING,
         allowNull: true,
+    },
+    phone: {
+        type: DataTypes.STRING,
+        allowNull: true,
     }
 }, {
     timestamps: true
