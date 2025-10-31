@@ -1,6 +1,6 @@
 const express = require('express');
 const routes = express.Router();;
-const { createExam, addQuestionAndAnswersToExam,getExamsByClassId, getExamById, getExamResultsByUser, submitExam } = require("../services/exam-services");
+const { createExam, addQuestionAndAnswersToExam,getExamsByClassId, getExamDetailForTeacher, getExamDetailForStudent, getExamResultsByUser, submitExam } = require("../services/exam-services");
 const authenticateToken = require("../middleware/authenticate");
 
 routes.post("/create-exam", authenticateToken, async (req, res) => {
@@ -66,15 +66,35 @@ routes.get("/getExamsByClass/:classId", authenticateToken, async (req, res) => {
   }
 });
 
-routes.get("/getExamDetail/:id", authenticateToken, async (req, res) => {
+routes.get("/examDetailForTeacher/:id", authenticateToken, async (req, res) => {
     try {
         const examId = req.params.id;
 
-        const result = await getExamById(examId);
+        const result = await getExamDetailForTeacher(examId);
 
         res.status(200).send({
             status: true,
-            message: "Lấy đề thi thành công",
+            message: "Lấy đề thi (giáo viên) thành công",
+            data: result
+        })
+    }
+    catch (error) {
+        res.status(500).send({
+            status: false,
+            message: error.message
+        })
+    }
+})
+
+routes.get("/examDetailForStudent/:id", authenticateToken, async (req, res) => {
+    try {
+        const examId = req.params.id;
+
+        const result = await getExamDetailForStudent(examId);
+
+        res.status(200).send({
+            status: true,
+            message: "Lấy đề thi (giáo viên) thành công",
             data: result
         })
     }

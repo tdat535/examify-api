@@ -94,7 +94,7 @@ const getExamsByClassId = async (classId) => {
     }
 };
 
-const getExamById = async (examId) => {
+const getExamDetailForTeacher = async (examId) => {
     try {
         const exam = await ExamTest.findByPk(examId, {
             include: [
@@ -122,6 +122,33 @@ const getExamById = async (examId) => {
         throw new Error(error.message);
     }
 }
+
+const getExamDetailForStudent = async (examId) => {
+  try {
+    const exam = await ExamTest.findByPk(examId, {
+      attributes: ["id", "title", "duration"], // chỉ thông tin cơ bản
+      include: [
+        {
+          model: Question,
+          attributes: ["id", "content", "score"], // ❌ bỏ correctAnswerIndex
+          include: [
+            {
+              model: Answer,
+              attributes: ["id", "content"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!exam) throw new Error("Không tìm thấy đề thi");
+
+    return exam;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 
 const submitExam = async (examId, studentId, answers) => {
     try {
@@ -173,6 +200,6 @@ const getExamResultsByUser = async (userId) => {
     }
 }
 
-module.exports = { createExam, addQuestionAndAnswersToExam, getExamById, submitExam, getExamResultsByUser, getExamsByClassId };
+module.exports = { createExam, addQuestionAndAnswersToExam, getExamDetailForTeacher, getExamDetailForStudent, submitExam, getExamResultsByUser, getExamsByClassId };
 
 
