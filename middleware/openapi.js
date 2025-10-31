@@ -1,4 +1,4 @@
-import swaggerJsDoc from "swagger-jsdoc";
+const swaggerJsDoc = require("swagger-jsdoc");
 
 // Cấu hình Swagger
 const swaggerDefinition = {
@@ -18,12 +18,9 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ["./docs/*.js"], // đường dẫn tới các file comment Swagger
+  apis: ["./docs/*.js"],
 };
 
 const swaggerSpec = swaggerJsDoc(options);
 
-export default function handler(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  res.status(200).send(swaggerSpec);
-}
+module.exports = swaggerSpec;

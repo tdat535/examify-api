@@ -12,7 +12,7 @@ app.use("/api/teacher", require("./routes/teacher-class-routes.js"));
 app.use("/api/student", require("./routes/student-classs-routes.js"));
 app.use("/api/dashboard", require("./routes/dashboard-routes.js"));
 
-const swaggerSpec = require("./public/openapi.js");
+const swaggerSpec = require("./middleware/openapi.js");
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "redoc.html"));
 });
