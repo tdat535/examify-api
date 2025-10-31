@@ -7,7 +7,7 @@
 
 /**
  * @openapi
- * /api/student-class/join:
+ * /api/student/join:
  *   post:
  *     summary: Học sinh tham gia lớp bằng mã lớp
  *     tags: [StudentClass]
@@ -44,7 +44,7 @@
 
 /**
  * @openapi
- * /api/student-class/getClasses:
+ * /api/student/getClasses:
  *   get:
  *     summary: Lấy danh sách lớp học sinh tham gia
  *     tags: [StudentClass]

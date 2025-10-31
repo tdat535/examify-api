@@ -89,10 +89,6 @@ const getExamsByClassId = async (classId) => {
             order: [["createdAt", "DESC"]],
         });
 
-        if (!exams || exams.length === 0) {
-            throw new Error("Không có bài thi nào trong lớp này");
-        }
-
         return exams;
     } catch (error) {
         throw new Error(error.message);

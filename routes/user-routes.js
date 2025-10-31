@@ -1,6 +1,7 @@
 const express = require("express");
 const routes = express.Router();
-const { register, login } = require("../services/user-services");
+const { register, login, refreshToken, editProfile, profile } = require("../services/user-services");
+const authenticateToken = require("../middleware/authenticate");
 
 routes.post("/register", async (req, res) => {
     try {
@@ -50,16 +51,54 @@ routes.post("/login", async (req, res) => {
     }
 })
 
-routes.post("/refresh-token", async (req, res) => {
+routes.post("/refresh-token", authenticateToken, async (req, res) => {
     try {
         const { refreshToken } = req.body;
-        const result = await refreshAccessToken(refreshToken);
+        const result = await refreshToken(refreshToken);
         res.status(200).send({
             status: true,   
             message: "Làm mới token thành cônggg",
             data: result
         });
     } catch (error) {
+        res.status(500).send({
+            status: false,
+            message: error.message
+        });
+    }
+});
+
+routes.put("/editProfile", authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const profileData = req.body;
+        const result = await editProfile(userId, profileData);
+        res.status(200).send({
+            status: true,
+            message: "Cập nhật thông tin người dùng thành công",
+            data: result
+        });
+    }   
+    catch (error) {
+        res.status(500).send({
+            status: false,
+            message: error.message
+        });
+    }
+});
+
+routes.get("/profile", authenticateToken, async (req, res) => {
+    try {
+        const teacherId = req.user.id;
+        console.log(teacherId);
+        const result = await profile(teacherId);
+        res.status(200).send({
+            status: true,
+            message: "Lấy thông tin người dùng thành công",
+            data: result
+        });
+    }
+    catch (error) {
         res.status(500).send({
             status: false,
             message: error.message
