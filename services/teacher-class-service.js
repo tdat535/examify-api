@@ -52,7 +52,7 @@ const getStudentsByClass = async (classId) => {
     const classData = await Class.findByPk(classId, {
       include: {
         model: User,
-        as: "Students",
+        as: "students",
         attributes: ["id", "username", "email"],
         through: { attributes: [] },
       },
@@ -61,12 +61,12 @@ const getStudentsByClass = async (classId) => {
     if (!classData) throw new Error("Không tìm thấy lớp học");
 
     return {
-      data: classData.Students
+      data: classData.students,
     };
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const removeStudentFromClass = async (classId, studentId) => {
   try {
