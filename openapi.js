@@ -19,7 +19,5 @@ const options = {
 
 const swaggerSpec = swaggerJsDoc(options);
 
-module.exports = (req, res) => {
-  res.setHeader("Content-Type", "application/json");
-  res.status(200).send(swaggerSpec);
-};
+// Xuất luôn object
+module.exports = swaggerSpec;
