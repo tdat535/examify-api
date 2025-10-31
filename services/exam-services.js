@@ -29,52 +29,57 @@ const createExam = async (examData) => {
 }
 
 const addQuestionAndAnswersToExam = async (examId, questionList) => {
-    const transactionQA = await Question.sequelize.transaction();
+  const transactionQA = await Question.sequelize.transaction();
 
-    try {
-        for (const questionData of questionList) {
-            const questionCreated = await Question.create(
-                {
-                    content: questionData.content,
-                    examId: examId,
-                    score: questionData.score,
-                },
-                { transaction: transactionQA }
-            );
+  try {
+    for (const questionData of questionList) {
+      // 1️⃣ Tạo câu hỏi trước
+      const questionCreated = await Question.create(
+        {
+          content: questionData.content,
+          examId,
+          score: questionData.score,
+        },
+        { transaction: transactionQA }
+      );
 
-            const answersCreated = [];
-            for (const answerData of questionData.answers) {
-                const created = await Answer.create(
-                    {
-                        questionId: questionCreated.id,
-                        label: answerData.label,
-                        content: answerData.content,
-                    },
-                    { transaction: transactionQA }
-                );
-                answersCreated.push(created);
-            }
-            const correctAnswers = answersCreated[questionData.correctAnswerIndex - 1];
-            if (correctAnswers) {
-                questionCreated.correctAnswerIndex = correctAnswers.id;
-                await questionCreated.save({ transaction: transactionQA });
-            }
-        }
+      // 2️⃣ Tạo đáp án
+      const answersCreated = [];
+      for (const answerData of questionData.answers) {
+        const created = await Answer.create(
+          {
+            questionId: questionCreated.id,
+            content: answerData.content,
+          },
+          { transaction: transactionQA }
+        );
+        answersCreated.push(created);
+      }
 
-        await Exam.update(
-            { updateAt: new Date() },
-            { where: { id: examId }, transaction: transactionQA }
-        )
-
-        await transactionQA.commit();
-        return {
-            message: "Thêm câu hỏi và đáp án thành công",
-        }
+      // 3️⃣ Gán correctAnswerIndex (lưu ID của đáp án đúng)
+      const correctAnswer =
+        answersCreated[questionData.correctAnswerIndex - 1];
+      if (correctAnswer) {
+        questionCreated.correctAnswerIndex = correctAnswer.id;
+        await questionCreated.save({ transaction: transactionQA });
+      }
     }
-    catch (error) {
-        throw new Error(error.message);
-    }
-}
+
+    // 4️⃣ Cập nhật thời gian cập nhật của Exam (đúng field là updatedAt)
+    await Exam.update(
+      { updatedAt: new Date() },
+      { where: { id: examId }, transaction: transactionQA }
+    );
+
+    // 5️⃣ Commit transaction
+    await transactionQA.commit();
+
+    return { message: "Thêm câu hỏi và đáp án thành công" };
+  } catch (error) {
+    await transactionQA.rollback();
+    throw new Error(error.message);
+  }
+};
 
 const getExamsByClassId = async (classId) => {
     try {
@@ -126,11 +131,11 @@ const getExamDetailForTeacher = async (examId) => {
 const getExamDetailForStudent = async (examId) => {
   try {
     const exam = await ExamTest.findByPk(examId, {
-      attributes: ["id", "title", "duration"], // chỉ thông tin cơ bản
+      attributes: ["id", "title", "duration"],
       include: [
         {
           model: Question,
-          attributes: ["id", "content", "score"], // ❌ bỏ correctAnswerIndex
+          attributes: ["id", "content", "score"],
           include: [
             {
               model: Answer,
