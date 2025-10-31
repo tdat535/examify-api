@@ -1,18 +1,18 @@
 const express = require("express");
-const { setupSequelize, connectDB } = require("./Config/database.js");
+const { setupSequelize, connectDB } = require("../Config/database.js");
 const path = require("path");
 
 const app = express();
 app.use(express.json());
 
-app.use("/api/auth", require("./routes/user-routes.js"));
-app.use("/api/exam", require("./routes/exam-routes.js"));
-app.use("/api/class", require("./routes/classManagement-routes.js"));
-app.use("/api/teacher", require("./routes/teacher-class-routes.js"));
-app.use("/api/student", require("./routes/student-classs-routes.js"));
-app.use("/api/dashboard", require("./routes/dashboard-routes.js"));
+app.use("/api/auth", require("../routes/user-routes.js"));
+app.use("/api/exam", require("../routes/exam-routes.js"));
+app.use("/api/class", require("../routes/classManagement-routes.js"));
+app.use("/api/teacher", require("../routes/teacher-class-routes.js"));
+app.use("/api/student", require("../routes/student-classs-routes.js"));
+app.use("/api/dashboard", require("../routes/dashboard-routes.js"));
 
-const swaggerSpec = require("./middleware/openapi.js");
+const swaggerSpec = require("../middleware/openapi.js");
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "redoc.html"));
 });
