@@ -20,7 +20,8 @@
     "nanoid": "^5.1.6",
     "redoc": "^3.0.0-rc.0",
     "redoc-express": "^2.1.0",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "swagger-jsdoc": "^6.2.8"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

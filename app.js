@@ -12,40 +12,14 @@ app.use("/api/teacher", require("./routes/teacher-class-routes.js"));
 app.use("/api/student", require("./routes/student-classs-routes.js"));
 app.use("/api/dashboard", require("./routes/dashboard-routes.js"));
 
-app.get("/", async (req, res) => {
-  try {
-    await setupSequelize.authenticate();
-    res.json({ message: "Server OK - DB connected" });
-  } catch (err) {
-    res.status(500).json({ message: "DB connection failed", error: err.message });
-  }
+const swaggerSpec = require("./docs/swagger");
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "docs", "redoc.html"));
 });
 
-const fs = require("fs");
-
-app.get("/docs", (req, res) => {
-  const spec = fs.readFileSync(path.join(__dirname, "docs/swagger.json"), "utf8");
-
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>API Docs</title>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" href="data:,">
-      </head>
-      <body>
-        <redoc spec-url='/api-docs/swagger.json'></redoc>
-        <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
-      </body>
-    </html>
-  `);
-});
-
-// Route để ReDoc load file JSON
-app.get("/api-docs/swagger.json", (req, res) => {
-  res.sendFile(path.join(__dirname, "docs/swagger.json"));
+app.get("/openapi.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
 });
 
 connectDB().then(() => {
