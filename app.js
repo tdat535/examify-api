@@ -20,6 +20,7 @@ app.get("/openapi.json", (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "docs")));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "redoc.html"));
