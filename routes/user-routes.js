@@ -50,6 +50,21 @@ routes.post("/login", async (req, res) => {
     }
 })
 
-routes.post
+routes.post("/refresh-token", async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+        const result = await refreshAccessToken(refreshToken);
+        res.status(200).send({
+            status: true,   
+            message: "Làm mới token thành cônggg",
+            data: result
+        });
+    } catch (error) {
+        res.status(500).send({
+            status: false,
+            message: error.message
+        });
+    }
+});
 
 module.exports = routes;

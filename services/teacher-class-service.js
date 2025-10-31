@@ -80,6 +80,37 @@ const removeStudentFromClass = async (classId, studentId) => {
   }
 }
 
+const editProfile = async (userId, profileData) => {
+  try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      throw new Error("Người dùng không tồn tại");
+    }
+
+    // Chỉ cho phép cập nhật các field được phép (tránh user sửa role, password...)
+    const allowedFields = ["realName", "phone", "email"];
+    const safeData = Object.fromEntries(
+      Object.entries(profileData).filter(([key]) => allowedFields.includes(key))
+    );
+
+    await user.update(safeData);
+
+    return {
+      message: "Cập nhật thông tin cá nhân thành công",
+      user: {
+        id: user.id,
+        username: user.username,
+        realName: user.realName,
+        email: user.email,
+        phone: user.phone,
+      },
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const profile = async (userId) => {
   try {
     const user = await User.findByPk(userId, {
@@ -99,4 +130,4 @@ const profile = async (userId) => {
 }
 
 
-module.exports = { createClass, getClassesByTeacher, getStudentsByClass, removeStudentFromClass, profile };
+module.exports = { createClass, getClassesByTeacher, getStudentsByClass, removeStudentFromClass, editProfile, profile };

@@ -10,6 +10,7 @@ app.use("/api/exam", require("./routes/exam-routes.js"));
 app.use("/api/class", require("./routes/classManagement-routes.js"));
 app.use("/api/teacher", require("./routes/teacher-class-routes.js"));
 app.use("/api/student", require("./routes/student-classs-routes.js"));
+app.use("/api/dashboard", require("./routes/dashboard-routes.js"));
 
 app.get("/", async (req, res) => {
   try {
@@ -48,7 +49,7 @@ app.get("/api-docs/swagger.json", (req, res) => {
 });
 
 connectDB().then(() => {
-  setupSequelize.sync({ alter: true })
+  setupSequelize.sync()
     .then(() => console.log("Database đã được đồng bộ"))
     .catch((err) => console.error("Lỗi đồng bộ database:", err));
 });

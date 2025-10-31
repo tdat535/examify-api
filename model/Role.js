@@ -13,12 +13,6 @@ const Role = setupSequelize.define('Role', {
     },
 }, {
     timestamps: false,
-    indexes: [
-        {
-            unique: true,
-            fields: ['name']
-        }
-    ]
 });
 
 module.exports = Role;

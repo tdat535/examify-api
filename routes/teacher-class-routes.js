@@ -1,6 +1,6 @@
 const express = require('express');
 const routes = express.Router();
-const { createClass, getClassesByTeacher, getStudentsByClass, removeStudentFromClass, profile } = require("../services/teacher-class-service")
+const { createClass, getClassesByTeacher, getStudentsByClass, removeStudentFromClass, editProfile, profile } = require("../services/teacher-class-service")
 const authenticateToken = require("../middleware/authenticate");
 // ➕ Tạo lớp mới
 routes.post("/createClass", authenticateToken, async (req, res) => {
@@ -71,6 +71,25 @@ routes.delete("/deleteStudent", authenticateToken, async (req, res) => {
             message: result.message,
         });
     }
+    catch (error) {
+        res.status(500).send({
+            status: false,
+            message: error.message
+        });
+    }
+});
+
+routes.put("/editProfile", authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const profileData = req.body;
+        const result = await editProfile(userId, profileData);
+        res.status(200).send({
+            status: true,
+            message: "Cập nhật thông tin giáo viên thành công",
+            data: result
+        });
+    }   
     catch (error) {
         res.status(500).send({
             status: false,
