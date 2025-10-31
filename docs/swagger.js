@@ -1,5 +1,6 @@
-const swaggerJsDoc = require("swagger-jsdoc");
+import swaggerJsDoc from "swagger-jsdoc";
 
+// Cấu hình Swagger
 const swaggerDefinition = {
   openapi: "3.0.0",
   info: {
@@ -9,25 +10,20 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: "https://examify-api-iota.vercel.app/",
+      url: "https://examify-api-iota.vercel.app",
       description: "Host server",
     },
   ],
-  components: {
-    securitySchemes: {
-      bearerAuth: {
-        type: "http",
-        scheme: "bearer",
-        bearerFormat: "JWT",
-      },
-    },
-  },
 };
 
 const options = {
   swaggerDefinition,
-  apis: ["./docs/*.js"],
+  apis: ["./docs/*.js"], // đường dẫn tới các file comment Swagger
 };
 
 const swaggerSpec = swaggerJsDoc(options);
-module.exports = swaggerSpec;
+
+export default function handler(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  res.status(200).send(swaggerSpec);
+}
