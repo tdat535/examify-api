@@ -32,18 +32,16 @@ const addQuestionAndAnswersToExam = async (examId, questionList) => {
   const transactionQA = await Question.sequelize.transaction();
 
   try {
+    // 🔹 Thêm mới câu hỏi + đáp án như cũ
     for (const questionData of questionList) {
-      // 1️⃣ Tạo câu hỏi trước
       const questionCreated = await Question.create(
         {
           content: questionData.content,
           examId,
-          score: questionData.score,
         },
         { transaction: transactionQA }
       );
 
-      // 2️⃣ Tạo đáp án
       const answersCreated = [];
       for (const answerData of questionData.answers) {
         const created = await Answer.create(
@@ -56,7 +54,6 @@ const addQuestionAndAnswersToExam = async (examId, questionList) => {
         answersCreated.push(created);
       }
 
-      // 3️⃣ Gán correctAnswerIndex (lưu ID của đáp án đúng)
       const correctAnswer =
         answersCreated[questionData.correctAnswerIndex - 1];
       if (correctAnswer) {
@@ -65,16 +62,32 @@ const addQuestionAndAnswersToExam = async (examId, questionList) => {
       }
     }
 
-    // 4️⃣ Cập nhật thời gian cập nhật của Exam (đúng field là updatedAt)
+    // 🔹 Lấy lại toàn bộ danh sách câu hỏi sau khi thêm
+    const allQuestions = await Question.findAll({
+      where: { examId },
+      transaction: transactionQA,
+    });
+
+    // 🔹 Tính điểm mới cho toàn bộ câu hỏi
+    const totalScore = 10;
+    const perQuestionScore = totalScore / allQuestions.length;
+
+    // 🔹 Cập nhật đồng loạt score
+    for (const q of allQuestions) {
+      q.score = perQuestionScore;
+      await q.save({ transaction: transactionQA });
+    }
+
+    // 🔹 Cập nhật thời gian bài thi
     await Exam.update(
       { updatedAt: new Date() },
       { where: { id: examId }, transaction: transactionQA }
     );
 
-    // 5️⃣ Commit transaction
     await transactionQA.commit();
-
-    return { message: "Thêm câu hỏi và đáp án thành công" };
+    return {
+      message: `Thêm câu hỏi thành công — Tự động chia điểm đều (${perQuestionScore.toFixed(2)} điểm/câu)`,
+    };
   } catch (error) {
     await transactionQA.rollback();
     throw new Error(error.message);

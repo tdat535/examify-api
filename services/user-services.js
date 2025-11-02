@@ -89,7 +89,7 @@ const refreshToken = async (token) => {
 
 const GenerateAccessToken = (user) => {
     return jwt.sign(
-        { id: user.id, role: user.role, username: user.username },
+        { id: user.id, role: user.roleId, username: user.username },
         process.env.ACCESS_KEY,
         { expiresIn: '1d' }
     )
@@ -97,7 +97,7 @@ const GenerateAccessToken = (user) => {
 
 const GenerateRefreshToken = (user) => {
     return jwt.sign(
-        { id: user.id, role: user.role, username: user.username },
+        { id: user.id, role: user.roleId, username: user.username },
         process.env.REFRESH_KEY,
         { expiresIn: '365d' }
     )

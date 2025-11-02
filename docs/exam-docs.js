@@ -94,9 +94,6 @@
  *                     content:
  *                       type: string
  *                       example: "2 + 2 = ?"
- *                     score:
- *                       type: number
- *                       example: 1
  *                     answers:
  *                       type: array
  *                       items:
