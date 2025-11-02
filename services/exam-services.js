@@ -11,7 +11,7 @@ const createExam = async (examData) => {
             title: examData.title,
             duration: examData.duration,
             quantityQuestion: examData.quantityQuestion,
-            classId: 1,
+            classId: examData.classId,
         });
 
         return {
