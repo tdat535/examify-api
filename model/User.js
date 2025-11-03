@@ -9,7 +9,7 @@ const User = setupSequelize.define('User', {
     },
     password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true, // có thể null nếu là social login
     },
     email: {
         type: DataTypes.STRING,
@@ -22,10 +22,19 @@ const User = setupSequelize.define('User', {
     phone: {
         type: DataTypes.STRING,
         allowNull: true,
+    },
+    provider: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    providerId: {
+        type: DataTypes.STRING,
+        allowNull: true,
     }
 }, {
     timestamps: true
 });
+
 
 Role.hasMany(User, { foreignKey: "roleId", as: "users" });
 User.belongsTo(Role, { foreignKey: "roleId", as: "role" });

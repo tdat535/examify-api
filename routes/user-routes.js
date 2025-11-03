@@ -1,6 +1,6 @@
 const express = require("express");
 const routes = express.Router();
-const { register, login, refreshToken, editProfile, profile } = require("../services/user-services");
+const { register, login, socialRegisterOrLogin, refreshToken, editProfile, profile } = require("../services/user-services");
 const authenticateToken = require("../middleware/authenticate");
 
 routes.post("/register", async (req, res) => {
@@ -9,13 +9,13 @@ routes.post("/register", async (req, res) => {
             username: req.body.username,
             password: req.body.password,
             email: req.body.email,
-            roleId: req.body.roleId,            
+            roleId: req.body.roleId,
         }
 
         const result = await register(userData);
 
         res.status(200).send({
-            status:true,
+            status: true,
             message: "Đăng ký thành công",
             data: result
         })
@@ -36,9 +36,9 @@ routes.post("/login", async (req, res) => {
         }
 
         const result = await login(userData);
-        
+
         res.status(200).json({
-            status:true,
+            status: true,
             message: "Đăng nhập thành công",
             data: result
         })
@@ -51,12 +51,29 @@ routes.post("/login", async (req, res) => {
     }
 })
 
+router.post("/social", async (req, res) => {
+    try {
+        const { name, email, provider, providerId, roleId } = req.body;
+        const result = await socialRegisterOrLogin({ name, email, provider, providerId, roleId });
+        res.status(200).json({
+            status: true,
+            message: "Đăng nhập thành công",
+            data: result
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: false,
+            message: error.message
+        })
+    }
+});
+
 routes.post("/refresh-token", authenticateToken, async (req, res) => {
     try {
         const { refreshToken } = req.body;
         const result = await refreshToken(refreshToken);
         res.status(200).send({
-            status: true,   
+            status: true,
             message: "Làm mới token thành cônggg",
             data: result
         });
@@ -78,7 +95,7 @@ routes.put("/editProfile", authenticateToken, async (req, res) => {
             message: "Cập nhật thông tin người dùng thành công",
             data: result
         });
-    }   
+    }
     catch (error) {
         res.status(500).send({
             status: false,

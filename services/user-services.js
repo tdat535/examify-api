@@ -64,6 +64,33 @@ const login = async (userData) => {
     }
 }
 
+const socialRegisterOrLogin = async ({ name, email, provider, providerId, roleId }) => {
+    try {
+        // Kiểm tra xem user đã tồn tại với provider này chưa
+        const user = await User.findOne({ where: { email, provider } });
+
+        if (!user) {
+            // Nếu chưa có, tạo mới
+            user = await User.create({
+                username: name,
+                email,
+                roleId: roleId,
+                provider,
+                providerId
+            });
+        }
+
+        return {
+            username: user.username,
+            email: user.email,
+            accessToken: GenerateAccessToken(user),
+            refreshToken: GenerateRefreshToken(user)
+        };
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
+
 const refreshToken = async (token) => {
     try {
         if (!token) {
@@ -152,4 +179,4 @@ const profile = async (userId) => {
   }
 }
 
-module.exports = { register, login, refreshToken, editProfile, profile };
+module.exports = { register, login, socialRegisterOrLogin, refreshToken, editProfile, profile };
