@@ -17,7 +17,7 @@ const Questions = setupSequelize.define('Question', {
     },
     score: {
         type: DataTypes.FLOAT,
-        allowNull: false,
+        allowNull: true,
     }
 }, {
     timestamps: true
