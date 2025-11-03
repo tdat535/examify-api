@@ -74,13 +74,17 @@ const addQuestionAndAnswersToExam = async (examId, questionList) => {
     }
 
     await Exam.update(
-      { updatedAt: new Date() },
+      {
+        quantityQuestion: allQuestions.length,
+        updatedAt: new Date(),
+      },
       { where: { id: examId }, transaction: transactionQA }
     );
 
     await transactionQA.commit();
+
     return {
-      message: `Thêm câu hỏi thành công — Tự động chia điểm đều (${perQuestionScore.toFixed(2)} điểm/câu)`,
+      message: `Thêm câu hỏi thành công — ${allQuestions.length} câu hỏi, tự động chia ${perQuestionScore.toFixed(2)} điểm/câu.`,
     };
   } catch (error) {
     await transactionQA.rollback();
