@@ -67,7 +67,7 @@ const login = async (userData) => {
 const socialRegisterOrLogin = async ({ name, email, provider, providerId, roleId }) => {
     try {
         // Kiểm tra xem user đã tồn tại với provider này chưa
-        const user = await User.findOne({ where: { email, provider } });
+        let user = await User.findOne({ where: { email, provider } });
 
         if (!user) {
             // Nếu chưa có, tạo mới
