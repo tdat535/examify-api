@@ -51,7 +51,7 @@ routes.post("/login", async (req, res) => {
     }
 })
 
-router.post("/social", async (req, res) => {
+routes.post("/social", async (req, res) => {
     try {
         const { name, email, provider, providerId, roleId } = req.body;
         const result = await socialRegisterOrLogin({ name, email, provider, providerId, roleId });
