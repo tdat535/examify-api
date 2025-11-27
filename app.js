@@ -5,17 +5,14 @@ const path = require("path");
 
 const app = express();
 
-// ==== FIX CORS CHO FLUTTER WEB ====
+// ==== ENABLE CORS CHUẨN CHO VERSEL ====
 app.use(
   cors({
-    origin: "*", // hoặc origin: ["http://localhost:52935", "http://localhost:4200"]
+    origin: "*",
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type, Authorization",
   })
 );
-
-// FIX preflight request (OPTIONS)
-app.options("*", cors());
 
 app.use(express.json());
 
