@@ -3,6 +3,7 @@ const Question = require("../model/Question");
 const Answer = require("../model/Answer");
 const ExamTest = require("../model/ExamTest");
 const ExamResult = require("../model/ExamResult");
+const Class = require("../model/Class");
 
 const createExam = async (examData) => {
 
@@ -203,8 +204,20 @@ const getExamResultsByUser = async (userId) => {
   try {
     const results = await ExamResult.findAll({
       where: { userId: userId },
-      include: { model: ExamTest, attributes: ['title'] }
+      include: [
+        {
+          model: ExamTest,
+          attributes: ['title'],
+          include: [
+            {
+              model: Class,
+              attributes: ['className'] // 👈 Lấy tên lớp
+            }
+          ]
+        }
+      ]
     });
+
     return results;
   }
   catch (error) {
