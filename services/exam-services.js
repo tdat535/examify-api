@@ -151,6 +151,10 @@ const getExamDetailForStudent = async (examId) => {
             },
           ],
         },
+        {
+          model: Class,
+          attributes: ["className"], // thêm cái này
+        },
       ],
     });
 
@@ -161,7 +165,6 @@ const getExamDetailForStudent = async (examId) => {
     throw new Error(error.message);
   }
 };
-
 
 const submitExam = async (examId, studentId, answers) => {
   try {
