@@ -30,7 +30,7 @@ const createExam = async (examData) => {
     // 3. Gửi notification cho từng học sinh
     for (const cs of students) {
       const student = cs.User;
-      const className = cs.Class?.className || "Lớp này"; // fallback nếu null
+      const className = cs.Class?.className || "Lớp"; // fallback nếu null
       const content = `Bài thi "${exam.title}" đã được tạo trong "${className}".`;
 
       await admin.firestore().collection('notifications').add({
