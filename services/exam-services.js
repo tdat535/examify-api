@@ -34,7 +34,7 @@ const createExam = async (examData) => {
       const content = `Bài thi "${exam.title}" đã được tạo trong "${className}".`;
 
       await admin.firestore().collection('notifications').add({
-        userId: student.id,
+        userId: student.id.toString(),  // ép kiểu string
         title: 'Bài thi mới',
         content,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
