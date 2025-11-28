@@ -22,26 +22,40 @@ const createExam = async (examData) => {
     const students = await ClassStudent.findAll({
       where: { classId: exam.classId },
       include: [
-        { model: User, attributes: ['id', 'realName', 'username'] },
-        { model: Class, attributes: ['className'] } // thêm thông tin className
+        { model: User, attributes: ['id', 'realName', 'username', 'fcmToken'] },
+        { model: Class, attributes: ['className'] }
       ]
     });
 
     // 3. Gửi notification cho từng học sinh
     for (const cs of students) {
       const student = cs.User;
-      const className = cs.Class?.className || "Lớp"; // fallback nếu null
+      const className = cs.Class?.className || "Lớp";
       const content = `Bài thi "${exam.title}" đã được tạo trong "${className}".`;
 
+      // Lưu notification vào Firestore
       await admin.firestore().collection('notifications').add({
-        userId: student.id.toString(),  // ép kiểu string
+        userId: student.id.toString(),
         title: 'Bài thi mới',
         content,
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
       });
+
+      // Gửi push notification nếu có FCM token
+      if (student.fcmToken) {
+        await admin.messaging().send({
+          token: student.fcmToken,
+          notification: {
+            title: 'Bài thi mới',
+            body: content,
+          },
+          data: {
+            examId: exam.id.toString(),
+          },
+        });
+      }
     }
 
-    // 4. Trả về dữ liệu exam
     return {
       examId: exam.id,
       title: exam.title,
@@ -49,8 +63,7 @@ const createExam = async (examData) => {
       quantityQuestion: exam.quantityQuestion,
       classId: exam.classId,
       createdAt: exam.createdAt,
-    }
-
+    };
   } catch (error) {
     throw new Error(error.message);
   }
