@@ -35,6 +35,8 @@ if (!admin.apps.length) {
   });
 
   console.log('✅ Firebase Admin initialized');
+  console.log('Project ID:', process.env.FIREBASE_PROJECT_ID);
+console.log('Client Email:', process.env.FIREBASE_CLIENT_EMAIL);
 }
 
 module.exports = admin;

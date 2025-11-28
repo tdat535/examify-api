@@ -195,13 +195,16 @@ const getExamDetailForStudent = async (examId) => {
 
 const submitExam = async (examId, studentId, answers) => {
   try {
+    // 1. Lấy thông tin đề thi kèm câu hỏi
     const exam = await ExamTest.findByPk(examId, {
       include: { model: Question, include: [Answer] }
-    })
+    });
 
     if (!exam) {
       throw new Error("Không tìm thấy đề thi");
     }
+
+    // 2. Tính điểm
     let totalScore = 0;
     for (const question of exam.Questions) {
       const studentAnswer = answers.find(ans => ans.questionId === question.id);
@@ -210,25 +213,44 @@ const submitExam = async (examId, studentId, answers) => {
       }
     }
 
+    // 3. Lưu kết quả nộp bài
     const result = await ExamResult.create({
       userId: studentId,
       examId: examId,
       score: totalScore,
       submitAt: new Date(),
-    })
+    });
 
+    // 4. Lấy thông tin lớp và giáo viên
+    const classInfo = await Class.findByPk(exam.classId, {
+      include: [{ model: User, as: 'teacher' }]
+    });
+
+    if (classInfo && classInfo.teacher) {
+      // 5. Gửi notification cho giáo viên
+      const student = await User.findByPk(studentId);
+      const content = `${student?.realName || 'Học sinh'} vừa nộp bài "${exam.title}" trong lớp "${classInfo.className}".`;
+
+      await admin.firestore().collection('notifications').add({
+        userId: classInfo.teacher.id.toString(), // giáo viên nhận notification
+        title: 'Học sinh đã nộp bài',
+        content,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+
+    // 6. Trả về kết quả nộp bài
     return {
       examId: result.examId,
       userId: result.userId,
       score: result.score,
       submitAt: result.submitAt,
-    }
+    };
 
-  }
-  catch (error) {
+  } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const getExamResultsByUser = async (userId) => {
   try {
