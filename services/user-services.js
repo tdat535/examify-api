@@ -179,4 +179,21 @@ const profile = async (userId) => {
   }
 }
 
-module.exports = { register, login, socialRegisterOrLogin, refreshToken, editProfile, profile };
+const updateFcmToken = async (userId, fcmToken) => {
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error("Người dùng không tồn tại");
+    }
+    user.fcmToken = fcmToken;
+    await user.save();
+    return {
+        message: "Cập nhật FCM token thành công",
+        fcmToken: user.fcmToken
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+module.exports = { register, login, socialRegisterOrLogin, refreshToken, editProfile, profile, updateFcmToken };

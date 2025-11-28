@@ -219,19 +219,39 @@ const submitExam = async (examId, studentId, answers) => {
       result = await ExamResult.create({ userId: studentId, examId, score: totalScore, status: 'submitted' });
     }
 
-    const classInfo = await Class.findByPk(exam.classId, {
-      include: [{ model: User, as: 'teacher' }]
-    });
+    // Gửi notification
+    const student = await User.findByPk(studentId);
+    const classInfo = await Class.findByPk(exam.classId, { include: [{ model: User, as: 'teacher' }] });
 
     if (classInfo && classInfo.teacher) {
-      const student = await User.findByPk(studentId);
-      const content = `${student?.realName || 'Học sinh'} vừa nộp bài "${exam.title}" trong lớp "${classInfo.className}".`;
+      // Teacher FCM token
+      const teacherFcmToken = classInfo.teacher.fcmToken;
+      if (teacherFcmToken) {
+        await admin.messaging().send({
+          token: teacherFcmToken,
+          notification: {
+            title: 'Học sinh đã nộp bài',
+            body: `${student?.realName || 'Học sinh'} vừa nộp bài "${exam.title}"`,
+          },
+          data: {
+            examId: exam.id.toString(),
+            studentId: student.id.toString(),
+          },
+        });
+      }
+    }
 
-      await admin.firestore().collection('notifications').add({
-        userId: classInfo.teacher.id.toString(), // giáo viên nhận notification
-        title: 'Học sinh đã nộp bài',
-        content,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    // Student FCM token
+    if (student.fcmToken) {
+      await admin.messaging().send({
+        token: student.fcmToken,
+        notification: {
+          title: 'Nộp bài thành công',
+          body: `Bạn đã nộp bài "${exam.title}" thành công!`,
+        },
+        data: {
+          examId: exam.id.toString(),
+        },
       });
     }
 
@@ -240,7 +260,6 @@ const submitExam = async (examId, studentId, answers) => {
     throw new Error(error.message);
   }
 };
-
 
 const getExamResultsByUser = async (userId) => {
   try {

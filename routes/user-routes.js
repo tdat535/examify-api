@@ -1,6 +1,6 @@
 const express = require("express");
 const routes = express.Router();
-const { register, login, socialRegisterOrLogin, refreshToken, editProfile, profile } = require("../services/user-services");
+const { register, login, socialRegisterOrLogin, refreshToken, editProfile, profile, updateFcmToken} = require("../services/user-services");
 const authenticateToken = require("../middleware/authenticate");
 
 routes.post("/register", async (req, res) => {
@@ -122,5 +122,25 @@ routes.get("/profile", authenticateToken, async (req, res) => {
         });
     }
 });
+
+routes.post("/update-fcm-token", authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { fcmToken } = req.body
+        const result = await updateFcmToken(userId, fcmToken)
+        res.status(200).send({
+            status: true,
+            message: "Cập nhật FCM token thành công",
+            data: result
+        });
+    }   
+    catch (error) {
+        res.status(500).send({
+            status: false,
+            message: error.message
+        });
+    }
+});
+
 
 module.exports = routes;

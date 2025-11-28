@@ -30,7 +30,9 @@ const User = setupSequelize.define('User', {
     providerId: {
         type: DataTypes.STRING,
         allowNull: true,
-    }
+    },
+    fcmToken: { type: DataTypes.STRING }, // thêm dòng này
+
 }, {
     timestamps: true
 });
