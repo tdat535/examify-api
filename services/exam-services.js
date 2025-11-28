@@ -219,6 +219,22 @@ const submitExam = async (examId, studentId, answers) => {
       result = await ExamResult.create({ userId: studentId, examId, score: totalScore, status: 'submitted' });
     }
 
+    const classInfo = await Class.findByPk(exam.classId, {
+      include: [{ model: User, as: 'teacher' }]
+    });
+
+    if (classInfo && classInfo.teacher) {
+      const student = await User.findByPk(studentId);
+      const content = `${student?.realName || 'Học sinh'} vừa nộp bài "${exam.title}" trong lớp "${classInfo.className}".`;
+
+      await admin.firestore().collection('notifications').add({
+        userId: classInfo.teacher.id.toString(), // giáo viên nhận notification
+        title: 'Học sinh đã nộp bài',
+        content,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+
     return result;
   } catch (error) {
     throw new Error(error.message);
