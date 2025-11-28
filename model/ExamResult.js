@@ -19,6 +19,10 @@ const ExamResult = setupSequelize.define('examResult', {
     submitAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
+    },
+    status: {
+        type: DataTypes.ENUM('not_started', 'submitted'),
+        defaultValue: 'not_started',
     }
 });
 
