@@ -4,17 +4,44 @@ const Answer = require("../model/Answer");
 const ExamTest = require("../model/ExamTest");
 const ExamResult = require("../model/ExamResult");
 const Class = require("../model/Class");
+const ClassStudent = require("../model/ClassStudent");
+const User = require("../model/User");
+const admin = require("../Config/firebase");
 
 const createExam = async (examData) => {
-
   try {
+    // 1. Tạo bài thi
     const exam = await Exam.create({
       title: examData.title,
       duration: examData.duration,
-      quantityQuestion: examData.quantityQuestion,
+      quantityQuestion: examData.quantityQuestion || 0,
       classId: examData.classId,
     });
 
+    // 2. Lấy danh sách học sinh trong lớp kèm thông tin tên lớp
+    const students = await ClassStudent.findAll({
+      where: { classId: exam.classId },
+      include: [
+        { model: User, attributes: ['id', 'realName', 'username'] },
+        { model: Class, attributes: ['className'] } // thêm thông tin className
+      ]
+    });
+
+    // 3. Gửi notification cho từng học sinh
+    for (const cs of students) {
+      const student = cs.User;
+      const className = cs.Class?.className || "Lớp này"; // fallback nếu null
+      const content = `Bài thi "${exam.title}" đã được tạo trong "${className}".`;
+
+      await admin.firestore().collection('notifications').add({
+        userId: student.id,
+        title: 'Bài thi mới',
+        content,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+
+    // 4. Trả về dữ liệu exam
     return {
       examId: exam.id,
       title: exam.title,
@@ -23,11 +50,11 @@ const createExam = async (examData) => {
       classId: exam.classId,
       createdAt: exam.createdAt,
     }
-  }
-  catch (error) {
+
+  } catch (error) {
     throw new Error(error.message);
   }
-}
+};
 
 const addQuestionAndAnswersToExam = async (examId, questionList) => {
   const transactionQA = await Question.sequelize.transaction();
